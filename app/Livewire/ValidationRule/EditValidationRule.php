@@ -11,17 +11,17 @@ use Illuminate\Support\Str;
 
 class EditValidationRule extends Component
 {
-    public ValidationRule $validationRule;
+    public $validationRule;
     public $template_id;
     public $fields = [];
     public $templates = [];
 
-    public function mount(ValidationRule $validationRule)
+    public function mount($id)
     {
-        $this->validationRule = $validationRule;
-        $this->template_id = $validationRule->template_id;
+        $this->validationRule = ValidationRule::findOrFail($id);
+        $this->template_id = $this->validationRule->template_id;
         $this->templates = Template::all();
-        $this->fields = $validationRule->validationRuleColumns->map(fn($column) => [
+        $this->fields = $this->validationRule->validationRuleColumns->map(fn($column) => [
             'id' => $column->id,
             'column' => $column->column,
             'rules' => json_decode($column->rules, true),
@@ -46,7 +46,7 @@ class EditValidationRule extends Component
         try {
             DB::beginTransaction();
 
-            $this->validationRule->update([ 'template_id' => $this->template_id ]);
+            $this->validationRule->update(['template_id' => $this->template_id]);
             $this->validationRule->validationRuleColumns()->delete();
 
             $columns = array_map(function ($field) {
@@ -74,10 +74,10 @@ class EditValidationRule extends Component
             $this->validationRule->validationRuleColumns()->createMany($columns);
 
             DB::commit();
-            return redirect()->route('vr.index')->with('success', 'Validation rule updated successfully.');
+            return redirect()->route(route: 'vr.index')->with('success', 'Validation rule updated successfully.');
         } catch (\Throwable $th) {
             DB::rollback();
-            throw $th;
+            return redirect()->route(route: 'vr.create')->with('error', 'Error updating validation rule: ' . $th->getMessage());
         }
     }
 

@@ -23,10 +23,11 @@ class WorkFlows extends Component
     public function deleteWorkFlow()
     {
         $workFlow = WorkFlow::findOrFail($this->deleteId);
+        $workFlow->approvalStages()->delete();
         $workFlow->delete();
         $this->showDeleteModal = false; // Hide modal after deletion
 
-        return redirect()->route('workflows.index')->with(['success', 'Work Flow has been deleted successfully']);
+        return redirect()->route(route: 'workflows.index')->with(['success', 'Work Flow has been deleted successfully']);
     }
 
     public function closeModal()

@@ -16,7 +16,7 @@ class CreateValidationRule extends Component
     public $fields = [];
     public $templates = [];
 
-    public function mount(ValidationRule $validationRule = null)
+    public function mount()
     {
         $this->validationRule = $validationRule ?? new ValidationRule();
         $this->template_id = $this->validationRule->template_id;

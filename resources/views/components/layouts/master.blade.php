@@ -15,7 +15,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <!-- App favicon -->
     <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}">
-    
+
     <!-- App css -->
     <link href="{{ asset('assets/libs/datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet"
         type="text/css" />
@@ -66,8 +66,8 @@
                         </div>
                         <div class="col-md-6">
                             <div class="d-none d-md-flex gap-4 align-item-center justify-content-md-end">
-                                <p class="mb-0">Design & Develop by <a href="https://myrathemes.com/"
-                                        target="_blank">MyraStudio</a> </p>
+                                <p class="mb-0">Design & Develop by <a href="#" target="_blank">Zendermate
+                                        Technologies</a> </p>
                             </div>
                         </div>
                     </div>
@@ -105,7 +105,5 @@
     <script src="assets/js/pages/datatables.js"></script>
 
 </body>
-
-<!-- Mirrored from myrathemes.com/drezoc/layouts/pages-starter by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 12 Jan 2025 07:05:45 GMT -->
 
 </html>

@@ -3,15 +3,7 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="header-title">Edit Role</h4>
-
-                @if (session()->has('success'))
-                    <div class="alert alert-success">{{ session('success') }}</div>
-                @endif
-
-                @if (session()->has('error'))
-                    <div class="alert alert-danger">{{ session('error') }}</div>
-                @endif
-
+                <x-alerts.alerts/>
                 <form wire:submit.prevent="submit">
                     <div class="mb-3">
                         <label class="form-label">Role Name</label>

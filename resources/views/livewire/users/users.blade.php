@@ -21,7 +21,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($users as $user)
+                    @forelse ($users as $user)
                         <tr>
                             <td>{{ $user->id }}</td>
                             <td>{{ $user->name }}</td>
@@ -30,15 +30,19 @@
                             <td class="text-end">
                                 <a class="btn btn-info btn-sm" href="{{ route('users.edit', $user->id) }}">Edit</a>
                                 <button type="button" class="btn btn-danger btn-sm"
-                                    wire:click="confirmDelete({{ $user->id }})" data-bs-toggle="modal"
-                                    data-bs-target="#deleteUser">Delete</button>
+                                    wire:click="confirm({{ $user->id }})">Delete</button>
+                                @if ($showDeleteModal)
+                                    <x-modals.delete :title="'Delete User'" :message="'Are you sure you want to delete this user?'" :confirmMethod="'deleteUser'" />
+                                @endif
                             </td>
                         </tr>
-                    @endforeach
+                    @empty
+                        <tr>
+                            <td colspan="5" class="text-center">No users found.</td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
-
-        {{-- {{ $users->links() }} --}}
     </div>
 </div>

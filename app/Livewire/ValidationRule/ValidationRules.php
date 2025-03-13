@@ -2,12 +2,13 @@
 
 namespace App\Livewire\ValidationRule;
 
+use App\Models\User;
 use App\Models\ValidationRule;
 use Livewire\Component;
-use Livewire\WithPagination;
-class ValidationRules extends Component
-{    use WithPagination;
+use Spatie\Permission\Models\Role;
 
+class ValidationRules extends Component
+{    
     public ?string $search;
     public $showDeleteModal = false;
 
@@ -15,28 +16,20 @@ class ValidationRules extends Component
 
     public function confirm($id)
     {
-        $this->roleId = $id;
+        $this->deleteId = $id;
         $this->showDeleteModal = true; // Show modal
     }
 
-    public function deleteRole()
+    public function deleteWorkFlow()
     {
-        if ($this->roleId) {
-            $role = Role::findOrFail($this->roleId);
+        $validationRule = ValidationRule::findOrFail($this->deleteId);
+        $validationRule->validationRuleColumns()->delete();
+        $validationRule->delete();
 
-            // Disassociate users from this role before deletion
-            $users = User::role($role->name)->get();
-            foreach ($users as $user) {
-                $user->removeRole($role);
-            }
+        $this->showDeleteModal = false;
 
-            // Delete the role
-            $role->delete();
+        return redirect()->route(route: 'vr.index')->with(['success', 'validation Rule has been deleted successfully']);
 
-            session()->flash('message', 'Role deleted and users disassociated successfully.');
-        }
-
-        $this->showDeleteModal = false; // Hide modal after deletion
     }
 
     public function closeModal()

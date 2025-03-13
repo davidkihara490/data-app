@@ -4,12 +4,11 @@
             <div class="card-body d-flex justify-content-between align-items-center">
                 <h4 class="header-title">{{ $template->name }}</h4>
                 <div class="d-flex flex-column align-items-center">
-                    <input type="date" wire:model.live.debounce.750ms="selectedDate" class="form-control"
+                    <input type="date" wire:model.live="selectedDate" class="form-control"
                         value="{{ now()->format('Y-m-d') }}">
                 </div>
                 <p class="header-title">Frequency - {{ ucfirst($template->frequency) }}</p>
             </div>
-
             @if ($errorsList)
                 <div class="alert alert-danger mt-3">
                     <ul>
@@ -20,12 +19,10 @@
                 </div>
             @endif
         </div>
-
         <div class="col-xl-12">
             <div class="card">
                 <div class="card-body">
                     <h4 class="header-title mb-4">Data Process</h4>
-
                     {{-- Tabs Navigation --}}
                     <ul class="nav nav-pills navtab-bg nav-justified">
                         @can('generate_data')
@@ -63,27 +60,28 @@
                             </li>
                         @endcan
                     </ul>
-
                     {{-- Tabs Content --}}
                     <div class="tab-content">
                         @switch($activeTab)
                             @case('dataGeneration')
                                 <div class="tab-pane active">
-                                    <button type="button" class="float-start btn btn-success btn-sm" wire:key="generate"
-                                        wire:click="handleDataGeneration({{ $template->id }})" wire:loading.attr="disabled"
-                                        wire:loading.class="bg-info">
-                                        <span wire:loading.remove>Fetch Data</span>
-                                        <span wire:loading>Fetching data...</span>
-                                    </button>
-                                    <button type="button" class="float-start btn btn-danger btn-sm" wire:key="reset"
-                                        wire:click="resetData({{ $template->id }})" wire:loading.attr="disabled"
-                                        wire:loading.class="bg-info">
-                                        <span wire:loading.remove>Reset Data</span>
-                                        <span wire:loading>Resetting data...</span>
-                                    </button>
+                                    <div class="d-flex justify-content-between">
+                                        <button type="button" class="btn btn-success btn-sm"
+                                            wire:click="handleDataGeneration({{ $template->id }})" wire:loading.attr="disabled"
+                                            wire:loading.class="bg-info">
+                                            <span wire:loading.remove>Fetch Data</span>
+                                            <span wire:loading>Fetching data...</span>
+                                        </button>
+                                        <button type="button" class="btn btn-danger btn-sm"
+                                            wire:click="resetData({{ $template->id }})" wire:loading.attr="disabled"
+                                            wire:loading.class="bg-info">
+                                            <span wire:loading.remove>Reset Data</span>
+                                            <span wire:loading>Resetting data...</span>
+                                        </button>
+                                    </div>
                                     <br>
-
-                                    <div class=" mt-4 alert {{ $dataFetchingStatus ? 'alert-success' : 'alert-danger' }}">
+                                    <div id="statusMessage"
+                                        class="mt-4 alert {{ $dataFetchingStatus ? 'alert-success' : 'alert-danger' }}">
                                         <p class="text-center">
                                             {{ $dataFetchingStatus ? 'Data was fetched. You can view it in the Data tab' : 'Data has not been fetched' }}
                                         </p>
@@ -181,3 +179,14 @@
         </div>
     </div>
 </div>
+{{-- <script>
+    Livewire.on('dataReset', () => {
+        // Ensure the fetched data status remains unchanged
+        let statusDiv = document.getElementById("statusMessage");
+        if (statusDiv.classList.contains('alert-success')) {
+            statusDiv.innerHTML = '<p class="text-center">Data was fetched. You can view it in the Data tab</p>';
+        } else {
+            statusDiv.innerHTML = '<p class="text-center">Data has not been fetched</p>';
+        }
+    });
+</script> --}}

@@ -4,12 +4,7 @@
             <a class="float-end btn btn-success btn-sm" href="{{ route('vr.create') }}">New</a>
         </div>
         <div class="card-body">
-            @if (session('success'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif
+            <x-alerts.alerts />
             <table id="datatable-buttons" class="table table-striped dt-responsive nowrap w-100">
                 <thead>
                     <tr>
@@ -27,8 +22,8 @@
                                 <a class="btn btn-info btn-sm"
                                     href="{{ route('vr.edit', $validationRule->id) }}">Edit</a>
                                 <button type="button" class="btn btn-danger btn-sm"
-                                    wire:click="confirmDelete({{ $validationRule->id }})" data-bs-toggle="modal"
-                                    data-bs-target="#deleteValidationRule">Delete</button>
+                                    wire:click="confirm({{ $validationRule->id }})">Delete</button>
+
                             </td>
                         </tr>
                     @empty
@@ -41,9 +36,8 @@
                 </tbody>
             </table>
         </div>
+        @if ($showDeleteModal)
+            <x-modals.delete :title="'Delete Validation Rule'" :message="'Are you sure you want to delete this rule? Deleting this rule will disassociate all templates with this rule.'" :confirmMethod="'deleteWorkFlow'" />
+        @endif
     </div>
-    <x-layouts.modal id="deleteValidationRule" title="Are you sure you want to delete this validation rule?">
-        <button type="button" class="btn btn-danger waves-effect" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" wire:click="delete" class="btn btn-info waves-effect waves-light">Delete</button>
-    </x-layouts.modal>
 </div>

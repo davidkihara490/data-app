@@ -28,7 +28,6 @@ class ViewTemplate extends Component
         $this->dataGeneration = DataGeneration::where('template_id', $id)
             ->whereDate('date', $this->selectedDate)
             ->first();
-
         $this->latestGeneratedData = $this->dataGeneration->data ?? [];
         $this->dataFetchingStatus = !empty($this->latestGeneratedData);
         $this->dataGenerationStatus = DataGeneration::where('template_id', $id)
@@ -44,15 +43,14 @@ class ViewTemplate extends Component
     {
         $this->setActiveTab('dataGeneration');
         try {
-            DB::connection('second_db')->table('customers')->where('processing_date', $this->selectedDate)->update([
+            DB::connection('second_db')->table("{$this->template->table}")->where('processing_date', $this->selectedDate)->update([
                 'processing_status' => 'processing'
             ]);
 
-            $data = DB::connection('second_db')->table('customers')->where('processing_date', $this->selectedDate)->get();
+            $data = DB::connection('second_db')->table("{$this->template->table}")->where('processing_date', operator: $this->selectedDate)->get();
+            $dataExists = DataGeneration::where('template_id', $id)->whereDate('date', $this->selectedDate)->first();
 
-
-            $dataExists = DataGeneration::where('template_id', $id)->whereDate('date', now()->toDateString())->first();
-
+            
             if ($dataExists) {
                 $dataExists->update([
                     'data' => $data,
@@ -71,7 +69,7 @@ class ViewTemplate extends Component
                 ]);
             }
 
-            $fetchedData = DataGeneration::where('template_id', $id)->whereDate('date', now()->toDateString())->first();
+            $fetchedData = DataGeneration::where('template_id', $id)->whereDate('date', $this->selectedDate)->first();
 
             if ($fetchedData) {
                 $this->dataFetchingStatus = true;
@@ -110,7 +108,7 @@ class ViewTemplate extends Component
     public function resetData($id)
     {
         try {
-            DB::connection('second_db')->table('customers')->where('processing_date', $this->selectedDate)->update([
+            DB::connection('second_db')->table("{$this->template->table}")->where('processing_date', $this->selectedDate)->update([
                 'processing_status' => null
             ]);
 
@@ -121,7 +119,7 @@ class ViewTemplate extends Component
             //throw $th;
         }
 
-        // $this->dataFetchingStatus = false;
+        $this->dataFetchingStatus = false;
     }
 
     public function render()

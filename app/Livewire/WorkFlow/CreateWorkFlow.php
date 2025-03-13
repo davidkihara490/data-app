@@ -32,7 +32,7 @@ class CreateWorkFlow extends Component
             $query->where('name', 'approve_data');
         })->get();
 
-       $new_field = [
+        $new_field = [
             ['id' => null, 'user_id' => '', 'stage' => '', 'uuid' => strval(Str::uuid())],
         ];
         $this->fields =
@@ -56,35 +56,33 @@ class CreateWorkFlow extends Component
         $this->stages = max(1, (int) $this->stages);
     }
 
-    public function rules(): array
-    {
-        return [
-            'name' => 'required|string',
-            'template_id' => 'required|integer|unique:templates,id',
-            'stages' => 'required|integer|min:1',
-            'fields' => 'required|array',
-            'fields.*.stage' => 'required|integer',
+    // public function rules(): array
+    // {
+    //     return [
+    //         'name' => 'required|string',
+    //         'template_id' => 'required|integer|unique:templates,id',
+    //         'stages' => 'required|integer|min:1',
+    //         'fields' => 'required|array',
+    //         'fields.*.stage' => 'required|integer',
+    //         'fields.*.user_id' => 'required|integer',
+    //     ];
+    // }
 
-            'fields.*.user_id' => 'required|integer',
-        ];
-    }
+    // public function messages(): array
+    // {
+    //     return [
+    //         'name.required' => 'Name is required',
+    //         'template_id.required' => 'Template is required',
+    //         'template_id.unique' => 'This template exists. Consider editing.',
+    //         'stages.required' => 'Number of stages is required',
+    //         'fields.*.stage.required' => 'Select a stage',
 
-    public function messages(): array
-    {
-        return [
-            'name.required' => 'Name is required',
-            'template_id.required' => 'Template is required',
-            'template_id.unique' => 'This template exists. Consider editing.',
-            'stages.required' => 'Number of stages is required',
-            'fields.*.stage.required' => 'Select a stage',
-
-            'fields.*.user_id.required' => 'Select a user',
-        ];
-    }
+    //         'fields.*.user_id.required' => 'Select a user',
+    //     ];
+    // }
 
     public function save()
     {
-        // $this->validate();
         try {
             DB::beginTransaction();
             $this->workFlow->name = $this->name;

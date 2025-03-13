@@ -4,33 +4,26 @@ namespace App\Livewire\Roles;
 
 use Livewire\Component;
 use Spatie\Permission\Models\Role;
-use App\Models\User;
-use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;
+use Illuminate\Support\Facades\DB;
 
 class CreateRole extends Component
 {
-    public $permissions;
-    public  $name;
+    public $permissions = [];
+    public $name;
+    public $selectedPermissions = [];
+
     public function mount()
     {
-        $this->permissions = Permission::all()->toArray();
+        $this->permissions = Permission::all();
     }
-    // protected $rules = [
-    //     'name' => 'required|string|max:255',
-    //     'permissions' => 'required|array',
-    //     'permissions.*' => 'exists:permissions,name',
-    // ];
-
-    // protected $messages = [
-    //     'name.required' => 'Role name is required.',
-    //     'permissions.required' => 'Choose at least one permission.',
-    // ];
-
 
     public function submit()
     {
-        // $this->validate();
+        $this->validate([
+            'name' => 'required|string|max:255|unique:roles,name',
+            'selectedPermissions' => 'required|array',
+        ]);
 
         try {
             DB::beginTransaction();
@@ -40,24 +33,19 @@ class CreateRole extends Component
                 ['name' => $this->name],
                 ['guard_name' => 'web']
             );
-            $permissions = $this->permissions;
 
-            $permissions = array_map(function ($item) {
-                return (int)$item;
-            }, $permissions);
+            // Retrieve selected permissions by ID
+            $permissions = Permission::whereIn('id', $this->selectedPermissions)->get();
+
+            // Sync exact permissions
             $role->syncPermissions($permissions);
 
             DB::commit();
 
-            // $notification = 'Role saved successfully.';
-            // $notification = array('messege' => $notification, 'alert-type' => 'success');
-            return redirect()->route('roles');
+            return redirect()->route('roles')->with(['success' => 'Role has been saved successfully.']);
         } catch (\Throwable $th) {
-            throw $th;
-
-            // $notification = 'Failed to save role.';
-            // $notification = array('messege' => $notification, 'alert-type' => 'error');
-            // return redirect()->route('admin.roles.index')->with($notification);
+            DB::rollback();
+            return redirect()->back()->with(['error' => 'Error saving role: ' . $th->getMessage()]);
         }
     }
     public function render()
